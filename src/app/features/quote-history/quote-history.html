@@ -15,40 +15,41 @@
     </button>
   </header>
 
-  <div class="flex flex-wrap items-end gap-3 px-6 lg:px-8">
-    <label class="block">
-      <span class="nauti-label">Client ID</span>
-      <input
-        class="nauti-input mt-2 w-72 px-3 py-2 text-sm"
-        type="text"
-        placeholder="Filter by client ID"
-        [value]="clientIdFilter()"
-        (input)="onClientId($event)"
-        (keyup.enter)="loadQuotes()"
-      />
-    </label>
-    <button
-      type="button"
-      class="rounded border border-line px-3 py-2 text-sm text-ink hover:border-ink"
-      (click)="loadQuotes()"
-      [disabled]="loading()"
-    >
-      Apply
-    </button>
-    <button
-      type="button"
-      class="rounded px-3 py-2 text-sm text-muted hover:text-ink"
-      (click)="clearFilter()"
-      [disabled]="loading()"
-    >
-      Clear
-    </button>
-  </div>
-
-  <div class="px-6 pt-4 lg:px-8">
-    <article class="nauti-card w-fit p-4">
+  <div class="flex flex-wrap items-stretch gap-3 px-6 lg:px-8">
+    <article class="nauti-card flex min-w-0 flex-1 flex-wrap items-end gap-3 p-4">
+      <label class="min-w-0 flex-1">
+        <span class="nauti-label">Client ID</span>
+        <input
+          class="nauti-input mt-2 w-full px-3 py-2 text-sm"
+          type="text"
+          placeholder="Filter by client ID"
+          [value]="clientIdFilter()"
+          (input)="onClientId($event)"
+          (keyup.enter)="loadQuotes()"
+        />
+      </label>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="rounded bg-ink px-3 py-2 text-sm font-medium text-canvas disabled:opacity-50"
+          (click)="loadQuotes()"
+          [disabled]="loading()"
+        >
+          Apply
+        </button>
+        <button
+          type="button"
+          class="rounded border border-line px-3 py-2 text-sm text-muted hover:border-neon/40 hover:text-neon disabled:opacity-50"
+          (click)="clearFilter()"
+          [disabled]="loading()"
+        >
+          Clear
+        </button>
+      </div>
+    </article>
+    <article class="nauti-card flex min-w-[10rem] flex-col justify-center p-4">
       <p class="nauti-label">Total quotes</p>
-      <p class="mt-2 font-display text-2xl font-semibold">{{ totalLabel() }}</p>
+      <p class="mt-2 font-display text-2xl font-semibold text-ink">{{ totalLabel() }}</p>
     </article>
   </div>
 

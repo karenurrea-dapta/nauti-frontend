@@ -20,5 +20,5 @@ export interface BootstrapUserRequest {
 }
 
 export function homeForRole(role: UserRole | null | undefined): string {
-  return role === 'super_admin' ? '/carriers' : '/portal/command';
+  return role === 'super_admin' ? '/carriers' : '/portal/assistant';
 }

@@ -27,15 +27,6 @@
       </a>
 
       <a
-        routerLink="/command"
-        routerLinkActive="border-neon/40 bg-neon/10 text-neon"
-        class="flex items-center gap-3 rounded border border-transparent px-3 py-2.5 text-sm text-muted hover:border-line hover:text-ink"
-      >
-        <svg [lucideIcon]="icons.command" class="size-4"></svg>
-        Chat
-      </a>
-
-      <a
         routerLink="/negotiations"
         routerLinkActive="border-neon/40 bg-neon/10 text-neon"
         class="flex items-center gap-3 rounded border border-transparent px-3 py-2.5 text-sm text-muted hover:border-line hover:text-ink"
@@ -86,15 +77,27 @@
   </nav>
 
   <div class="space-y-1 px-3 pb-6">
-    @if (variant() === 'admin') {
-      <a
-        routerLink="/deploy"
-        routerLinkActive="ring-1 ring-neon/50"
-        class="flex w-full items-center justify-start gap-3 rounded bg-ink px-3 py-2.5 text-sm font-medium text-canvas"
+    @if (canSwitchView()) {
+      <button
+        type="button"
+        class="flex w-full items-center justify-between gap-3 rounded px-3 py-2 text-left text-sm text-muted hover:text-ink"
+        (click)="toggleView()"
       >
-        <svg [lucideIcon]="icons.rocket" class="size-4"></svg>
-        Deploy Agent
-      </a>
+        <span class="flex min-w-0 items-center gap-3">
+          <svg [lucideIcon]="icons.view" class="size-4 shrink-0"></svg>
+          <span class="min-w-0 truncate">{{ viewingClient() ? 'Client view' : 'Super admin' }}</span>
+        </span>
+        <span
+          class="relative h-5 w-9 shrink-0 rounded-full border border-line"
+          [class.bg-neon/20]="viewingClient()"
+        >
+          <span
+            class="absolute top-0.5 size-3.5 rounded-full bg-ink transition-[left]"
+            [class.left-4]="viewingClient()"
+            [class.left-0.5]="!viewingClient()"
+          ></span>
+        </span>
+      </button>
     }
 
     <app-theme-toggle />

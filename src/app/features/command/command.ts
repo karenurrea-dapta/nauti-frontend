@@ -829,8 +829,7 @@ export class Command implements OnDestroy {
 
   private async boot(): Promise<void> {
     await this.auth.whenReady();
-    this.isClientSession =
-      this.auth.role() === 'client';
+    this.isClientSession = this.auth.role() === 'client';
 
     this.loadWorkspace();
 
@@ -983,9 +982,7 @@ export class Command implements OnDestroy {
     }
 
     if (!clientId) {
-      this.errorMessage =
-        'Your client profile is not ready yet.';
-      this.cdr.detectChanges();
+      this.beginClientChat();
       return;
     }
 
@@ -1010,9 +1007,15 @@ export class Command implements OnDestroy {
   ): void {
     this.selectedClient = client;
     this.operation.client_id = client.id;
+    this.beginClientChat();
+  }
+
+
+  private beginClientChat(): void {
     this.operation.currency = '';
     this.writingOther = false;
     this.otherDraft = '';
+    this.errorMessage = '';
     this.step = 'currency';
     this.cdr.detectChanges();
     this.scrollThread();
@@ -1744,18 +1747,6 @@ export class Command implements OnDestroy {
   }
 
 
-  startAnother(): void {
-    const dealId = this.route.snapshot.queryParamMap.get('deal');
-    this.resetConversation();
-    if (dealId) {
-      void this.router.navigate([], {
-        queryParams: {},
-        replaceUrl: true,
-      });
-    }
-  }
-
-
   resetConversation(): void {
 
     this.openedFromDeal =
@@ -1822,8 +1813,12 @@ export class Command implements OnDestroy {
 
     this.carriersByPhone.clear();
 
-    if (this.isClientSession && this.selectedClient) {
-      this.applySessionClient(this.selectedClient);
+    if (this.isClientSession) {
+      if (this.selectedClient) {
+        this.applySessionClient(this.selectedClient);
+        return;
+      }
+      this.beginClientChat();
       return;
     }
 

@@ -1,7 +1,7 @@
 {
   "/engine": {
-    "target": "http://localhost:4321",
-    "secure": false,
+    "target": "https://nauti-engine.fly.dev",
+    "secure": true,
     "changeOrigin": true,
     "pathRewrite": { "^/engine": "" }
   }

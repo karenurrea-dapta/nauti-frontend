@@ -7,10 +7,10 @@
   <a
     routerLink="/portal/assistant"
     class="rounded-lg border px-3 py-2.5 text-left transition"
-    [class.border-neon/50]="!selectedId()"
-    [class.bg-neon/5]="!selectedId()"
-    [class.border-line]="selectedId()"
-    [class.hover:border-ink/30]="selectedId()"
+    [class.border-neon/50]="assistantOpen()"
+    [class.bg-neon/5]="assistantOpen()"
+    [class.border-line]="!assistantOpen()"
+    [class.hover:border-ink/30]="!assistantOpen()"
   >
     <p class="font-mono text-xs text-ink">Nauti Assistant</p>
     <p class="mt-1 text-[11px] text-muted">Quote any cargo by chatting</p>

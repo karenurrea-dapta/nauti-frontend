@@ -21,7 +21,7 @@ export const superAdminGuard: CanActivateFn = async () => {
     return true;
   }
   if (auth.role() === 'client') {
-    return router.createUrlTree(['/portal']);
+    return router.createUrlTree(['/portal/assistant']);
   }
   return router.createUrlTree(['/login']);
 };

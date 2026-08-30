@@ -13,6 +13,8 @@ import { firebaseAuth } from '../firebase';
 import { AppUser, homeForRole, UserRole } from '../models/user';
 import { LogisticsApi } from '../services/logistics.api';
 
+const VIEW_ROLE_KEY = 'nauti.viewRole';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly api = inject(LogisticsApi);
@@ -21,8 +23,18 @@ export class AuthService {
   readonly appUser = signal<AppUser | null>(null);
   readonly ready = signal(false);
   readonly error = signal<string | null>(null);
+  private readonly viewOverride = signal<UserRole | null>(readStoredViewRole());
 
-  readonly role = computed<UserRole | null>(() => this.appUser()?.role ?? null);
+  readonly accountRole = computed<UserRole | null>(() => this.appUser()?.role ?? null);
+  readonly role = computed<UserRole | null>(() => {
+    const account = this.accountRole();
+    if (account !== 'super_admin') {
+      return account;
+    }
+    return this.viewOverride() ?? account;
+  });
+  readonly canSwitchView = computed(() => this.accountRole() === 'super_admin');
+  readonly viewingClient = computed(() => this.role() === 'client');
   readonly clientId = computed(() => this.appUser()?.client_id ?? '');
   readonly email = computed(() => this.appUser()?.email || this.firebaseUser()?.email || '');
 
@@ -46,6 +58,20 @@ export class AuthService {
 
   homePath(): string {
     return homeForRole(this.role());
+  }
+
+  setViewRole(role: UserRole): void {
+    if (this.accountRole() !== 'super_admin') {
+      return;
+    }
+    this.viewOverride.set(role);
+    sessionStorage.setItem(VIEW_ROLE_KEY, role);
+  }
+
+  toggleView(): UserRole {
+    const next: UserRole = this.role() === 'client' ? 'super_admin' : 'client';
+    this.setViewRole(next);
+    return next;
   }
 
   async login(email: string, password: string): Promise<void> {
@@ -88,6 +114,8 @@ export class AuthService {
 
   async logout(): Promise<void> {
     this.error.set(null);
+    this.viewOverride.set(null);
+    sessionStorage.removeItem(VIEW_ROLE_KEY);
     await signOut(firebaseAuth);
     this.appUser.set(null);
   }
@@ -135,6 +163,15 @@ export class AuthService {
     this.ready.set(true);
     this.resolveReady?.();
     this.resolveReady = null;
+  }
+}
+
+function readStoredViewRole(): UserRole | null {
+  try {
+    const raw = sessionStorage.getItem(VIEW_ROLE_KEY);
+    return raw === 'client' || raw === 'super_admin' ? raw : null;
+  } catch {
+    return null;
   }
 }
 

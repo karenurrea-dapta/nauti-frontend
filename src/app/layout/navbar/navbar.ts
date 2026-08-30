@@ -6,15 +6,15 @@ import {
   LucideHistory,
   LucideSparkles,
   LucideLogOut,
-  LucideMessageCircle,
-  LucideRocket,
   LucideScrollText,
+  LucideShield,
   LucideTruck,
   LucideUserRound,
   LucideUsers,
 } from '@lucide/angular';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { homeForRole } from '../../core/models/user';
 import { ConversationList } from '../conversation-list/conversation-list';
 import { ThemeToggle } from '../theme-toggle/theme-toggle';
 
@@ -31,18 +31,24 @@ export class Navbar {
   private readonly router = inject(Router);
 
   protected readonly email = this.auth.email;
+  protected readonly canSwitchView = this.auth.canSwitchView;
+  protected readonly viewingClient = this.auth.viewingClient;
   protected readonly icons = {
     assistant: LucideSparkles,
-    command: LucideMessageCircle,
     negotiations: LucideHandshake,
     truck: LucideTruck,
     client: LucideUsers,
     history: LucideHistory,
     logs: LucideScrollText,
-    rocket: LucideRocket,
     account: LucideUserRound,
     logout: LucideLogOut,
+    view: LucideShield,
   };
+
+  protected async toggleView(): Promise<void> {
+    const next = this.auth.toggleView();
+    await this.router.navigateByUrl(homeForRole(next));
+  }
 
   protected async logout(): Promise<void> {
     await this.auth.logout();

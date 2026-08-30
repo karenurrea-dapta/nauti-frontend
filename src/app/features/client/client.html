@@ -1,21 +1,27 @@
 <div class="client-page">
   <div class="top-navigation">
-    <button type="button" class="back-button" (click)="goBack()">← Clients</button>
     <button
       type="button"
-      class="refresh-dashboard-button"
+      class="rounded border border-line px-3 py-2 text-sm text-muted hover:border-neon/40 hover:text-neon"
+      (click)="goBack()"
+    >
+      ← Clients
+    </button>
+    <button
+      type="button"
+      class="rounded bg-ink px-3 py-2 text-sm font-medium text-canvas disabled:opacity-50"
       (click)="refreshDashboard()"
       [disabled]="loadingClient() || loadingKpis()"
     >
-      {{ loadingKpis() ? 'Refreshing...' : 'Refresh' }}
+      {{ loadingKpis() ? 'Refreshing…' : 'Refresh' }}
     </button>
   </div>
 
   <section class="client-header">
     <div class="client-heading">
-      <span class="section-eyebrow">CLIENT CONTROL TOWER</span>
+      <p class="nauti-label">Client control tower</p>
       <h1>{{ client()?.name || 'Client Dashboard' }}</h1>
-      <p>
+      <p class="client-lede">
         Real-time logistics performance, negotiation outcomes and autonomous agent activity.
       </p>
     </div>
@@ -30,7 +36,7 @@
     <section class="client-information">
       <div class="client-info-title">
         <div>
-          <span>CLIENT INFORMATION</span>
+          <span class="nauti-label">Client information</span>
           <h2>{{ selectedClient.name }}</h2>
         </div>
         <span class="client-id">ID: {{ selectedClient.id }}</span>
@@ -71,7 +77,7 @@
 
   <section class="performance-heading">
     <div>
-      <span class="section-eyebrow">AGENT PERFORMANCE</span>
+      <p class="nauti-label">Agent performance</p>
       <h2>Client KPIs</h2>
       <p>Analytics calculated from operations associated with this client.</p>
     </div>
@@ -165,7 +171,7 @@
   <section class="activity-panel">
     <div class="activity-header">
       <div>
-        <span class="section-eyebrow">OPERATION ACTIVITY</span>
+        <p class="nauti-label">Operation activity</p>
         <h2>Agent execution</h2>
         <p>Operational detail will appear here once activity is available for this client.</p>
       </div>

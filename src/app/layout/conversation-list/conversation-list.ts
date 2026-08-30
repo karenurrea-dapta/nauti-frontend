@@ -44,6 +44,7 @@ export class ConversationList implements OnInit {
 
   protected readonly cards = signal<ConversationCard[]>([]);
   protected readonly selectedId = signal<string | null>(null);
+  protected readonly assistantOpen = signal(false);
   protected readonly loading = signal(true);
   protected readonly loadError = signal('');
 
@@ -81,8 +82,10 @@ export class ConversationList implements OnInit {
   }
 
   private syncSelected(): void {
-    const deal = this.router.parseUrl(this.router.url).queryParams['deal'];
+    const tree = this.router.parseUrl(this.router.url);
+    const deal = tree.queryParams['deal'];
     this.selectedId.set(typeof deal === 'string' && deal ? deal : null);
+    this.assistantOpen.set(this.router.url.startsWith('/portal/assistant'));
   }
 
   private toCards(operations: Operation[]): ConversationCard[] {

@@ -101,7 +101,7 @@
           </div>
         </div>
       } @else {
-      @if (!openedFromDeal && isClientSession && !selectedClient) {
+      @if (!openedFromDeal && isClientSession && !selectedClient && !after('client')) {
         <div class="cmd-in flex items-end gap-2">
           <img src="nauti-mark.png" alt="" class="size-5 shrink-0 rounded-md object-cover" />
           <div class="min-w-0 max-w-[min(100%,36rem)]">
@@ -133,7 +133,7 @@
         }
       }
 
-      @if (!openedFromDeal && selectedClient && after('client')) {
+      @if (!openedFromDeal && (selectedClient || isClientSession) && after('client')) {
         <div class="cmd-in flex items-end gap-2">
           <img src="nauti-mark.png" alt="" class="size-5 shrink-0 rounded-md object-cover" />
           <div class="min-w-0 max-w-[min(100%,36rem)]">
@@ -599,7 +599,7 @@
             <div class="rounded-2xl rounded-bl-md border border-line bg-raised px-4 py-3">
               <p class="text-sm leading-relaxed text-ink">
                 @if (openedFromDeal && !dispatching) {
-                  This commitment is on file. I can call the carriers on this lane again.
+                  This commitment is on file.
                 } @else {
                   I’m calling the carriers that run this lane. You’ll see every step here as it happens.
                 }
@@ -607,18 +607,6 @@
             </div>
           </div>
         </div>
-
-        @if (openedFromDeal && !dispatching) {
-          <div class="flex justify-center">
-            <button
-              type="button"
-              class="rounded bg-ink px-4 py-2 text-sm font-medium text-canvas"
-              (click)="retryDispatch()"
-            >
-              Call the carriers again
-            </button>
-          </div>
-        }
 
         @if (dispatching) {
           <div class="cmd-in flex items-end gap-2">
@@ -740,16 +728,6 @@
             </div>
           </div>
         }
-
-        <div class="flex justify-center pt-1">
-          <button
-            type="button"
-            class="rounded bg-ink px-4 py-2 text-sm font-medium text-canvas"
-            (click)="startAnother()"
-          >
-            Start another
-          </button>
-        </div>
       }
       }
     </div>

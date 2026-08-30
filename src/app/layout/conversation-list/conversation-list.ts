@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { Operation } from '../../core/models/operation';
+import { DealsRefresh } from '../../core/services/deals-refresh';
 import { LogisticsApi } from '../../core/services/logistics.api';
 import { formatMoney, formatShortDate } from '../../core/utils/format';
 
@@ -31,6 +32,15 @@ export class ConversationList implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dealsRefresh = inject(DealsRefresh);
+
+  constructor() {
+    // Reload when the assistant registers a new operation.
+    effect(() => {
+      this.dealsRefresh.version();
+      this.loadDeals();
+    });
+  }
 
   protected readonly cards = signal<ConversationCard[]>([]);
   protected readonly selectedId = signal<string | null>(null);
@@ -45,7 +55,9 @@ export class ConversationList implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.syncSelected());
+  }
 
+  private loadDeals(): void {
     const clientId = this.auth.clientId() || undefined;
     this.api
       .listOperations(clientId)

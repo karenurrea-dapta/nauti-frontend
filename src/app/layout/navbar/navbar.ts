@@ -4,6 +4,7 @@ import {
   LucideDynamicIcon,
   LucideHandshake,
   LucideHistory,
+  LucideSparkles,
   LucideLogOut,
   LucideMessageCircle,
   LucideRocket,
@@ -31,6 +32,7 @@ export class Navbar {
 
   protected readonly email = this.auth.email;
   protected readonly icons = {
+    assistant: LucideSparkles,
     command: LucideMessageCircle,
     negotiations: LucideHandshake,
     truck: LucideTruck,

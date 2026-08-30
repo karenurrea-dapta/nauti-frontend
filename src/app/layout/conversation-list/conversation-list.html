@@ -5,16 +5,15 @@
   </div>
 
   <a
-    routerLink="/portal/command"
-    [queryParams]="{ deal: null }"
+    routerLink="/portal/assistant"
     class="rounded-lg border px-3 py-2.5 text-left transition"
     [class.border-neon/50]="!selectedId()"
     [class.bg-neon/5]="!selectedId()"
     [class.border-line]="selectedId()"
     [class.hover:border-ink/30]="selectedId()"
   >
-    <p class="font-mono text-xs text-ink">New commitment</p>
-    <p class="mt-1 text-[11px] text-muted">Start a conversation</p>
+    <p class="font-mono text-xs text-ink">Nauti Assistant</p>
+    <p class="mt-1 text-[11px] text-muted">Quote any cargo by chatting</p>
   </a>
 
   <div class="min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">

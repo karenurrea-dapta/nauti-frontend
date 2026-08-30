@@ -1,0 +1,48 @@
+.cmd-in {
+  animation: cmd-in 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cmd-in-user {
+  animation: cmd-in-user 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cmd-dot {
+  animation: cmd-dot 1s ease-in-out infinite;
+}
+
+@keyframes cmd-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cmd-in-user {
+  from {
+    opacity: 0;
+    transform: translateY(8px) translateX(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cmd-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}

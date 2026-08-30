@@ -1,0 +1,87 @@
+<section class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-canvas">
+  <header class="flex items-center gap-3 border-b border-line px-6 py-4">
+    <img src="nauti-mark.png" alt="" class="size-8 rounded-md object-cover" />
+    <div>
+      <h1 class="font-display text-base font-semibold text-ink">Nauti Assistant</h1>
+      <p class="flex items-center gap-1.5 text-xs text-muted">
+        <span class="size-1.5 animate-pulse rounded-full bg-neon"></span>
+        Quote any cargo by chatting
+      </p>
+    </div>
+  </header>
+
+  <div class="flex flex-wrap gap-2 border-b border-line px-6 py-3">
+    @for (tag of contextTags(); track tag.key) {
+      <span
+        class="rounded-lg border px-2.5 py-1.5"
+        [class.border-neon/40]="tag.value"
+        [class.bg-neon/5]="tag.value"
+        [class.border-line]="!tag.value"
+        [class.opacity-50]="!tag.value"
+      >
+        <span class="nauti-label">{{ tag.label }}</span>
+        <span class="ml-1.5 font-mono text-xs text-ink">{{ tag.value || '—' }}</span>
+      </span>
+    }
+  </div>
+
+  <div #thread class="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-6">
+    @for (message of messages(); track message.id) {
+      @if (message.role === 'assistant') {
+        <div class="cmd-in flex items-end gap-2">
+          <img src="nauti-mark.png" alt="" class="size-5 shrink-0 rounded-md object-cover" />
+          <div class="max-w-[min(100%,34rem)] whitespace-pre-line rounded-2xl rounded-bl-md border border-line bg-raised px-4 py-3 text-sm text-ink">
+            {{ message.text }}
+          </div>
+        </div>
+      } @else {
+        <div class="cmd-in-user flex justify-end">
+          <div class="max-w-[min(100%,28rem)] whitespace-pre-line rounded-2xl rounded-br-md bg-ink px-4 py-3 text-sm text-canvas">
+            {{ message.text }}
+          </div>
+        </div>
+      }
+    }
+
+    @if (sending()) {
+      <div class="cmd-in flex items-end gap-2">
+        <img src="nauti-mark.png" alt="" class="size-5 shrink-0 rounded-md object-cover" />
+        <div class="flex items-center gap-2 rounded-2xl rounded-bl-md border border-line bg-raised px-4 py-3">
+          <span class="cmd-dot size-1.5 rounded-full bg-neon"></span>
+          <span class="cmd-dot size-1.5 rounded-full bg-neon [animation-delay:140ms]"></span>
+          <span class="cmd-dot size-1.5 rounded-full bg-neon [animation-delay:280ms]"></span>
+          <span class="text-xs text-muted">Nauti is typing</span>
+        </div>
+      </div>
+    }
+
+    @if (error()) {
+      <p class="rounded-lg border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">{{ error() }}</p>
+    }
+  </div>
+
+  <footer class="border-t border-line px-6 py-4">
+    <div class="flex items-center gap-2">
+      <input
+        #composerField
+        class="nauti-input min-w-0 flex-1 px-3 py-2.5 text-sm"
+        type="text"
+        [value]="draft"
+        placeholder="Describe what you need to move…"
+        autocomplete="off"
+        [disabled]="sending()"
+        (input)="onDraft($event)"
+        (keyup.enter)="send()"
+      />
+      <button
+        type="button"
+        class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-ink text-canvas disabled:opacity-50"
+        (click)="send()"
+        [disabled]="sending()"
+        aria-label="Send"
+      >
+        <svg [lucideIcon]="icons.send" class="size-4"></svg>
+      </button>
+    </div>
+  </footer>
+</section>

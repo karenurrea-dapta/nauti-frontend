@@ -13,6 +13,8 @@ import { forkJoin } from 'rxjs';
 
 import { buildNegotiationRows, negotiationMatchesSearch, NegotiationRow } from '../../core/models/audit';
 import { AnalyticsKpis, emptyAnalyticsKpis } from '../../core/models/analytics';
+import { Call } from '../../core/models/call';
+import { Carrier } from '../../core/models/carrier';
 import { AuthService } from '../../core/auth/auth.service';
 import { LogisticsApi } from '../../core/services/logistics.api';
 import { AuditKpis } from './audit-kpis';
@@ -42,9 +44,27 @@ export class Audit implements OnInit {
   protected readonly loading = signal(true);
   protected readonly loadError = signal<string | null>(null);
 
-  protected readonly carriersContacted = computed(
-    () => new Set(this.rows().map((row) => row.carrierId).filter(Boolean)).size,
-  );
+  private readonly contactedCalls = signal<Call[]>([]);
+  private readonly carrierDirectory = signal<Carrier[]>([]);
+
+  // Unique carriers actually reached: quote/negotiation rows plus dispatched
+  // calls (matched to carriers by phone digits when possible).
+  protected readonly carriersContacted = computed(() => {
+    const contacted = new Set(this.rows().map((row) => row.carrierId).filter(Boolean));
+    const phoneToCarrier = new Map(
+      this.carrierDirectory()
+        .filter((carrier) => digits(carrier.phone))
+        .map((carrier) => [digits(carrier.phone), carrier.id]),
+    );
+    for (const call of this.contactedCalls()) {
+      const phone = digits(call.to_number || call.contact_phone);
+      if (!phone) {
+        continue;
+      }
+      contacted.add(phoneToCarrier.get(phone) ?? `tel:${phone}`);
+    }
+    return contacted.size;
+  });
 
   protected readonly complianceRate = computed(() =>
     Math.round(this.kpis().mandate_compliance_rate),
@@ -78,6 +98,7 @@ export class Audit implements OnInit {
         client_id: clientId || undefined,
       }),
       kpis: this.api.getAnalyticsKpis(clientId || undefined),
+      calls: this.api.listCalls(clientId || undefined),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -90,6 +111,8 @@ export class Audit implements OnInit {
             carriers: data.carriers.items,
           });
           this.rows.set(rows);
+          this.contactedCalls.set(data.calls);
+          this.carrierDirectory.set(data.carriers.items);
           this.kpis.set(data.kpis);
           this.selectedId.set(rows[0]?.id ?? null);
           this.loading.set(false);
@@ -171,4 +194,8 @@ function csvCell(value: string | number | boolean): string {
     return `"${raw.replace(/"/g, '""')}"`;
   }
   return raw;
+}
+
+function digits(value: string | null | undefined): string {
+  return (value ?? '').replace(/\D/g, '');
 }

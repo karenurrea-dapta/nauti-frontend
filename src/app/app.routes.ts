@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { clientGuard, guestGuard, superAdminGuard } from './core/auth/auth.guards';
+import { Assistant } from './features/assistant/assistant';
 import { Audit } from './features/audit/audit';
 import { HomeRedirect } from './features/auth/home-redirect';
 import { Login } from './features/auth/login';
@@ -27,6 +28,7 @@ export const routes: Routes = [
     component: AdminShell,
     canActivate: [superAdminGuard],
     children: [
+      { path: 'assistant', component: Assistant },
       { path: 'carriers', component: CarriersDirectory },
       { path: 'command', component: Command },
       { path: 'negotiations', component: Audit },
@@ -46,6 +48,7 @@ export const routes: Routes = [
     canActivate: [clientGuard],
     children: [
       { path: '', component: Audit },
+      { path: 'assistant', component: Assistant },
       { path: 'command', component: Command },
       { path: 'carriers', component: CarriersDirectory },
       { path: 'calls', component: PortalCalls },

@@ -1,0 +1,8 @@
+{
+  "/engine": {
+    "target": "http://localhost:4321",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/engine": "" }
+  }
+}

@@ -25,6 +25,7 @@ import {
 } from 'rxjs/operators';
 
 import { NgTemplateOutlet } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import {
   FormsModule
@@ -64,6 +65,11 @@ import {
 import {
   Quote
 } from '../../core/models/quote';
+import {
+  parseTranscript,
+  TranscriptTurn,
+  VoiceCallDetail,
+} from '../../core/models/voice-call';
 
 import {
   LogisticsApi
@@ -255,7 +261,8 @@ const SKIPPABLE_STEPS = new Set<Step>([
   imports: [
     FormsModule,
     LucideDynamicIcon,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    RouterLink
   ],
 
   templateUrl: './command.html',
@@ -320,6 +327,12 @@ export class Command implements OnDestroy {
 
   quotes: Quote[] =
     [];
+
+  openCallQuoteId: string | null = null;
+  callDetail: VoiceCallDetail | null = null;
+  callDetailLoading = false;
+  callDetailError = '';
+
 
   dispatching =
     false;
@@ -2509,6 +2522,46 @@ export class Command implements OnDestroy {
     return call.carrier_name || call.phone_number || 'Carrier';
   }
 
+
+  toggleQuoteCall(quote: Quote): void {
+    const callId = quote.call_id ?? '';
+    if (!callId) {
+      return;
+    }
+    if (this.openCallQuoteId === quote.id) {
+      this.openCallQuoteId = null;
+      this.cdr.detectChanges();
+      return;
+    }
+    this.openCallQuoteId = quote.id;
+    this.callDetail = null;
+    this.callDetailError = '';
+    this.callDetailLoading = true;
+    this.cdr.detectChanges();
+    this.api
+      .getVoiceCall(callId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (detail) => {
+          if (this.openCallQuoteId === quote.id) {
+            this.callDetail = detail;
+            this.callDetailLoading = false;
+            this.cdr.detectChanges();
+          }
+        },
+        error: () => {
+          if (this.openCallQuoteId === quote.id) {
+            this.callDetailError = 'Could not load the call detail.';
+            this.callDetailLoading = false;
+            this.cdr.detectChanges();
+          }
+        },
+      });
+  }
+
+  callTranscript(): TranscriptTurn[] {
+    return parseTranscript(this.callDetail?.transcript);
+  }
 
   quoteCarrierLabel(
     quote: Quote

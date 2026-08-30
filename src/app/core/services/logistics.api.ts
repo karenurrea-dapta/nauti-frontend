@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { API_BASE, DAPTA_CALL_AGENTS_KEY, DAPTA_CALL_AGENTS_URL } from '../config';
+import { API_BASE, BATCH_API_BASE } from '../config';
 import { AnalyticsKpis } from '../models/analytics';
 import { Call } from '../models/call';
 import {
@@ -24,6 +24,7 @@ import {
   Operation,
 } from '../models/operation';
 import { PrimaryRoute } from '../models/primary-route';
+import { VoiceCallDetail } from '../models/voice-call';
 import { Quote, QuoteListQuery } from '../models/quote';
 import { AppUser, BootstrapUserRequest } from '../models/user';
 
@@ -135,15 +136,15 @@ export class LogisticsApi {
   }
 
   startDaptaBatch(body: DaptaDispatchRequest): Observable<DaptaDispatchResponse> {
-    return this.http.post<DaptaDispatchResponse>(DAPTA_CALL_AGENTS_URL, body, {
-      params: { 'x-api-key': DAPTA_CALL_AGENTS_KEY },
-    });
+    return this.http.post<DaptaDispatchResponse>(`${BATCH_API_BASE}/batches`, body);
+  }
+
+  getVoiceCall(callId: string): Observable<VoiceCallDetail> {
+    return this.http.get<VoiceCallDetail>(`${BATCH_API_BASE}/calls/${callId}`);
   }
 
   pollDaptaBatch(batchId: string): Observable<DaptaBatchPoll> {
-    // Poll through Nauti only. The Dapta start URL is the same path; posting
-    // {batch_id} there from the browser was opening a second call.
-    return this.http.post<DaptaBatchPoll>(`${API_BASE}/dapta/call-batch`, {
+    return this.http.post<DaptaBatchPoll>(`${BATCH_API_BASE}/dapta/call-batch`, {
       batch_id: batchId,
     });
   }

@@ -15,6 +15,8 @@ import { PortalCalls } from './features/portal/portal-calls';
 import { QuoteHistory } from './features/quote-history/quote-history';
 import { AdminShell } from './layout/admin-shell/admin-shell';
 import { PortalShell } from './layout/portal-shell/portal-shell';
+import { CommunicationDetail } from './features/communications/communication-detail';
+import { Communications } from './features/communications/communications';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: HomeRedirect },
@@ -29,6 +31,8 @@ export const routes: Routes = [
       { path: 'command', component: Command },
       { path: 'negotiations', component: Audit },
       { path: 'logs', component: Logs },
+      { path: 'communications', component: Communications },
+      { path: 'communications/call/:callId', component: CommunicationDetail },
       { path: 'client', component: ClientDirectory },
       { path: 'client/:id', component: Client },
       { path: 'quote-history', component: QuoteHistory },
@@ -45,6 +49,8 @@ export const routes: Routes = [
       { path: 'command', component: Command },
       { path: 'carriers', component: CarriersDirectory },
       { path: 'calls', component: PortalCalls },
+      { path: 'communications', component: Communications },
+      { path: 'communications/call/:callId', component: CommunicationDetail },
     ],
   },
   { path: '**', component: HomeRedirect },

@@ -13,7 +13,7 @@ import { LucideDynamicIcon, LucideSearch } from '@lucide/angular';
 
 import { Call } from '../../core/models/call';
 import { LogisticsApi } from '../../core/services/logistics.api';
-import { formatClock, formatDuration } from '../../core/utils/format';
+import { formatDuration } from '../../core/utils/format';
 
 @Component({
   selector: 'app-logs',
@@ -86,9 +86,5 @@ export class Logs implements OnInit {
 
   protected durationLabel(seconds: number | null | undefined): string {
     return formatDuration(seconds);
-  }
-
-  protected markLabel(seconds: number | null | undefined): string {
-    return formatClock(seconds);
   }
 }

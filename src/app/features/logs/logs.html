@@ -47,22 +47,21 @@
             <th class="px-4 py-2 font-medium">Agent</th>
             <th class="px-4 py-2 font-medium">Duration</th>
             <th class="px-4 py-2 font-medium">Summary</th>
-            <th class="px-4 py-2 font-medium">Audio mark</th>
             <th class="px-4 py-2 font-medium">Evidence</th>
           </tr>
         </thead>
         <tbody>
           @if (loadError()) {
             <tr>
-              <td class="px-4 py-8 text-sm text-danger" colspan="6">{{ loadError() }}</td>
+              <td class="px-4 py-8 text-sm text-danger" colspan="5">{{ loadError() }}</td>
             </tr>
           } @else if (loading()) {
             <tr>
-              <td class="px-4 py-8 text-sm text-muted" colspan="6">Loading call logs…</td>
+              <td class="px-4 py-8 text-sm text-muted" colspan="5">Loading call logs…</td>
             </tr>
           } @else if (visible().length === 0) {
             <tr>
-              <td class="px-4 py-8 text-sm text-muted" colspan="6">No calls found.</td>
+              <td class="px-4 py-8 text-sm text-muted" colspan="5">No calls found.</td>
             </tr>
           } @else {
             @for (call of visible(); track call.id) {
@@ -74,7 +73,6 @@
                 <td class="px-4 py-3 font-mono text-xs text-muted">{{ call.agent_id || '—' }}</td>
                 <td class="px-4 py-3 font-mono text-sm">{{ durationLabel(call.duration) }}</td>
                 <td class="px-4 py-3 text-sm">{{ call.summary || 'No summary available' }}</td>
-                <td class="px-4 py-3 font-mono text-sm">{{ markLabel(call.audio_timestamp) }}</td>
                 <td class="px-4 py-3 text-sm">
                   @if (call.url) {
                     <a class="text-neon hover:underline" [href]="call.url" target="_blank" rel="noreferrer">

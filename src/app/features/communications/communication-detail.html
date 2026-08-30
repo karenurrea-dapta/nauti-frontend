@@ -1,0 +1,81 @@
+<section class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+  <header class="px-6 py-6 lg:px-8">
+    <a routerLink=".." class="text-sm text-muted hover:text-ink">&larr; Communications</a>
+    <p class="nauti-label mt-3">Call detail</p>
+    <h1 class="mt-1 font-display text-[28px] font-semibold tracking-[-0.02em] text-ink">
+      {{ detail()?.contact_name && detail()?.contact_name !== 'N/A' ? detail()?.contact_name : detail()?.to_number || 'Call' }}
+    </h1>
+    @if (detail(); as d) {
+      <p class="mt-1 font-mono text-xs text-muted">
+        {{ d.call_id }} · {{ d.created_at | date: 'MMM d, y HH:mm' }} · {{ durationLabel() }}
+      </p>
+    }
+  </header>
+
+  <div class="min-h-0 flex-1 overflow-auto px-6 pb-8 lg:px-8">
+    @if (loading()) {
+      <p class="text-sm text-muted">Loading call…</p>
+    } @else if (loadError()) {
+      <p class="text-sm text-danger">{{ loadError() }}</p>
+    } @else if (detail(); as d) {
+      <div class="grid gap-4 lg:grid-cols-2">
+        <div class="space-y-4">
+          <article class="nauti-card p-5">
+            <p class="nauti-label">Post-call analysis</p>
+            <p class="mt-2 text-sm leading-relaxed text-ink">{{ d.call_analysis?.call_summary || 'No summary available.' }}</p>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              <span class="rounded border border-line px-2 py-1">Sentiment: {{ d.call_analysis?.user_sentiment || '—' }}</span>
+              <span class="rounded border border-line px-2 py-1">
+                {{ d.call_analysis?.call_successful ? 'Successful' : 'Not successful' }}
+              </span>
+              @if (d.call_analysis?.in_voicemail) {
+                <span class="rounded border border-line px-2 py-1">Voicemail</span>
+              }
+              <span class="rounded border border-line px-2 py-1">{{ d.disconnection_reason || '—' }}</span>
+            </div>
+          </article>
+
+          <article class="nauti-card p-5">
+            <p class="nauti-label">Quote captured</p>
+            <p class="mt-2 font-display text-2xl font-semibold">{{ quotedLabel() }}</p>
+            <p class="text-sm text-muted">Pickup: {{ d.call_analysis?.custom_analysis_data?.quoted_date || '—' }}</p>
+          </article>
+
+          @if (d.recording_url) {
+            <article class="nauti-card p-5">
+              <p class="nauti-label">Recording</p>
+              <audio class="mt-2 w-full" controls [src]="d.recording_url"></audio>
+            </article>
+          }
+
+          @if (variables().length > 0) {
+            <article class="nauti-card p-5">
+              <p class="nauti-label">Call variables</p>
+              <div class="mt-2 space-y-1">
+                @for (v of variables(); track v.key) {
+                  <p class="text-xs"><span class="font-mono text-muted">{{ v.key }}:</span> {{ v.value }}</p>
+                }
+              </div>
+            </article>
+          }
+        </div>
+
+        <article class="nauti-card p-5">
+          <p class="nauti-label">Transcript</p>
+          @if (transcript().length === 0) {
+            <p class="mt-2 text-sm text-muted">No transcript available.</p>
+          } @else {
+            <div class="mt-3 space-y-2">
+              @for (turn of transcript(); track $index) {
+                <p class="text-sm" [class.text-ink]="turn.role === 'agent'" [class.text-muted]="turn.role === 'user'">
+                  <span class="font-medium">{{ turn.role === 'agent' ? 'Nauti' : 'Carrier' }}:</span>
+                  {{ turn.text }}
+                </p>
+              }
+            </div>
+          }
+        </article>
+      </div>
+    }
+  </div>
+</section>
